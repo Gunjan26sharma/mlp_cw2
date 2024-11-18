@@ -48,6 +48,7 @@ def get_args():
     parser.add_argument('--block_type', type=str, default='conv_block', 
                     choices=['conv_block', 'dim_red_block', 'bn_residual_block', 'bn_residual_dim_red_block'],
                     help='Specify the type of block to use.')
+    parser.add_argument('--learning_rate', nargs="?", type=float, default=1e-2, help='Learning rate for optimizer')  # Added learning rate argument
     args = parser.parse_args()
     print(args)
     return args
