@@ -42,13 +42,15 @@ val_data_loader = DataLoader(val_data, batch_size=args.batch_size, shuffle=True,
 test_data_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
 
 if args.block_type == 'conv_block':
-    processing_block_type = ConvolutionalProcessingBlock
-    dim_reduction_block_type = ConvolutionalDimensionalityReductionBlock
-elif args.block_type == 'empty_block':
-    processing_block_type = EmptyBlock
-    dim_reduction_block_type = EmptyBlock
+    block = ConvolutionalProcessingBlock
+elif args.block_type == 'dim_red_block':
+    block = ConvolutionalDimensionalityReductionBlock
+elif args.block_type == 'bn_residual_block':
+    block = ConvolutionalProcessingBlockBN  
+elif args.block_type == 'bn_residual_dim_red_block':
+    block = ConvolutionalDimensionalityReductionBlockBN  
 else:
-    raise ModuleNotFoundError
+    raise ValueError(f"Unknown block type: {args.block_type}")
 
 custom_conv_net = ConvolutionalNetwork(  # initialize our network object, in this case a ConvNet
     input_shape=(args.batch_size, args.image_num_channels, args.image_height, args.image_width),
