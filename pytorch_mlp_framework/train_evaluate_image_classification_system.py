@@ -41,24 +41,34 @@ train_data_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=T
 val_data_loader = DataLoader(val_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
 test_data_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
 
-# Set up processing and reduction block types based on the block_type argument
+# Set the processing and reduction block types based on the block type argument
 if args.block_type == 'conv_block':
+    # Use the standard convolutional processing block and reduction block
     processing_block_type = ConvolutionalProcessingBlock
     dim_reduction_block_type = ConvolutionalDimensionalityReductionBlock
+
 elif args.block_type == 'dim_red_block':
+    # Use the standard convolutional processing block and reduction block
     processing_block_type = ConvolutionalProcessingBlock
     dim_reduction_block_type = ConvolutionalDimensionalityReductionBlock
+
 elif args.block_type == 'bn_residual_block':
+    # Use batch normalization and residual connections in the processing block
+    # Use the standard reduction block without residual connections
     processing_block_type = ConvolutionalProcessingBlockBN
     dim_reduction_block_type = ConvolutionalDimensionalityReductionBlock
+
 elif args.block_type == 'bn_residual_dim_red_block':
+    # Use batch normalization and residual connections in the processing block
+    # Use batch normalization only (no residuals) in the reduction block
     processing_block_type = ConvolutionalProcessingBlockBN
     dim_reduction_block_type = ConvolutionalDimensionalityReductionBlockBN
+
 else:
     raise ValueError(f"Unknown block type: {args.block_type}")
 
-# Initialize the ConvolutionalNetwork
-custom_conv_net = ConvolutionalNetwork(  # initialize our network object, in this case a ConvNet
+# Initialize the ConvolutionalNetwork with the specified blocks
+custom_conv_net = ConvolutionalNetwork(
     input_shape=(args.batch_size, args.image_num_channels, args.image_height, args.image_width),
     num_output_classes=args.num_classes,
     num_filters=args.num_filters,
