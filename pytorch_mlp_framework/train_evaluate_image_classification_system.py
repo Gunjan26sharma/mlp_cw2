@@ -41,24 +41,33 @@ train_data_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=T
 val_data_loader = DataLoader(val_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
 test_data_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
 
+# Set up processing and reduction block types based on the block_type argument
 if args.block_type == 'conv_block':
-    block = ConvolutionalProcessingBlock
+    processing_block_type = ConvolutionalProcessingBlock
+    dim_reduction_block_type = ConvolutionalDimensionalityReductionBlock
 elif args.block_type == 'dim_red_block':
-    block = ConvolutionalDimensionalityReductionBlock
+    processing_block_type = ConvolutionalProcessingBlock
+    dim_reduction_block_type = ConvolutionalDimensionalityReductionBlock
 elif args.block_type == 'bn_residual_block':
-    block = ConvolutionalProcessingBlockBN  
+    processing_block_type = ConvolutionalProcessingBlockBN
+    dim_reduction_block_type = ConvolutionalDimensionalityReductionBlock
 elif args.block_type == 'bn_residual_dim_red_block':
-    block = ConvolutionalDimensionalityReductionBlockBN  
+    processing_block_type = ConvolutionalProcessingBlockBN
+    dim_reduction_block_type = ConvolutionalDimensionalityReductionBlockBN
 else:
     raise ValueError(f"Unknown block type: {args.block_type}")
 
+# Initialize the ConvolutionalNetwork
 custom_conv_net = ConvolutionalNetwork(  # initialize our network object, in this case a ConvNet
     input_shape=(args.batch_size, args.image_num_channels, args.image_height, args.image_width),
-    num_output_classes=args.num_classes, num_filters=args.num_filters, use_bias=False,
-    num_blocks_per_stage=args.num_blocks_per_stage, num_stages=args.num_stages,
+    num_output_classes=args.num_classes,
+    num_filters=args.num_filters,
+    use_bias=False,
+    num_blocks_per_stage=args.num_blocks_per_stage,
+    num_stages=args.num_stages,
     processing_block_type=processing_block_type,
-    dimensionality_reduction_block_type=dim_reduction_block_type)
-
+    dimensionality_reduction_block_type=dim_reduction_block_type
+)
 conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
                                     experiment_name=args.experiment_name,
                                     num_epochs=args.num_epochs,
