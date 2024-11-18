@@ -45,9 +45,9 @@ def get_args():
                         help='A flag indicating whether we will use GPU acceleration or not')
     parser.add_argument('--weight_decay_coefficient', nargs="?", type=float, default=0,
                         help='Weight decay to use for Adam')
-    parser.add_argument('--block_type', type=str, default='conv_block',
-                        help='Type of convolutional blocks to use in our network '
-                             '(This argument will be useful in running experiments to debug your network)')
+    parser.add_argument('--block_type', type=str, default='conv_block', 
+                    choices=['conv_block', 'dim_red_block', 'bn_residual_block', 'bn_residual_dim_red_block'],
+                    help='Specify the type of block to use.')
     args = parser.parse_args()
     print(args)
     return args
